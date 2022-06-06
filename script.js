@@ -26,6 +26,9 @@ function checkboxChangeHandler(event){
         event.target.disabled = true;
         document.querySelector(`#${weekday} .stream-start-time`)
         .value = '';
+        document.querySelector(`#${weekday} .stream-description`)
+        .value = '';
+        console.log(document.querySelector(`#${weekday} .stream-description`))
     }
 }
 
