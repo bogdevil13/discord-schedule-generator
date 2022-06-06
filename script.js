@@ -26,6 +26,9 @@ function checkboxChangeHandler(event){
         event.target.disabled = true;
         document.querySelector(`#${weekday} .stream-start-time`)
         .value = '';
+        document.querySelector(`#${weekday} .stream-description`)
+        .value = '';
+        console.log(document.querySelector(`#${weekday} .stream-description`))
     }
 }
 
@@ -120,8 +123,9 @@ document.addEventListener('DOMContentLoaded', (event) => {
         checkbox.addEventListener('change', checkboxChangeHandler );
     }
 
-    for(let checkbox of document.getElementsByClassName('stream-start-time') ){
-        checkbox.addEventListener('change', timeChangeHandler );
+    for(let timepicker of document.getElementsByClassName('stream-start-time') ){
+        timepicker.addEventListener('change', timeChangeHandler );
+        timepicker.addEventListener('focus', (event)=>{event.target.showPicker() }) 
     }
 
     document.getElementById("generate-botton").addEventListener('click', generateScheduleHandler)
