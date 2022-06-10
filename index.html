@@ -10,12 +10,7 @@
     <script src="script.js"></script>
     <title>Schedule Generator</title>
     <link rel="icon" type="image/x-icon" href="favicon.ico">
-    <style>
-      .max-width-input {
-        width: 100%;
-        display: block;
-      }
-    </style>
+    <link rel="stylesheet" href="style.css">
   </head>
 
   <body>
@@ -32,19 +27,21 @@
         </div>
       </div>
 
-      <table class="table table-striped">
-        <thead>
-          <tr>
-            <th scope="col">Day</th>
-            <th scope="col">Streaming</th>
-            <th scope="col">Time</th>
-            <th scope="col">Description/Category</th>
-          </tr>
-        </thead>
-        <tbody id="table-rows">
-
-        </tbody>
-      </table>
+      <div class="scrollable">
+        <table class="table table-striped">
+          <thead>
+            <tr>
+              <th scope="col">Day</th>
+              <th scope="col">Streaming</th>
+              <th scope="col">Time</th>
+              <th scope="col">Description/Category</th>
+            </tr>
+          </thead>
+          <tbody id="table-rows">
+  
+          </tbody>
+        </table>
+      </div>
 
       <div class="border">
         <button id="generate-botton" type="button" class="btn btn-primary   m-2 ">Generate Discord Message</button>
@@ -53,6 +50,7 @@
         <!-- <p id="debug-string" class="text-danger"></p> -->
         <textarea id="output-copy" class="  m-2" rows="7" cols="50" readonly style="visibility: hidden;"></textarea>
       </div>
+      <a href="/custom-message.html">Experimental Page</a>
     </div>
   </body>
 

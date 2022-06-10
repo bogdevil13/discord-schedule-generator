@@ -1,5 +1,5 @@
 
-const weekDaysList = ['Monday','Tuesday','Wednesday','Thrusday','Friday','Saturday','Sunday'];
+const weekDaysList = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
 
 function generateDayRow(weekDayName){
     return `<tr id=${weekDayName} class='week-row'>
@@ -30,6 +30,16 @@ function checkboxChangeHandler(event){
         .value = '';
         console.log(document.querySelector(`#${weekday} .stream-description`))
     }
+    else { //checked
+        let populatedRows = [...document.querySelectorAll('.week-row')].filter(wr=> wr.querySelector('.day-checkbox').checked ) // https://www.w3.org/TR/selectors-api/#queryselectorall -> already sorted in the order of appearance 
+        let currentRowIndex =  populatedRows.findIndex(rw=> rw.id == weekday)
+        let copyElementIndex = currentRowIndex ? currentRowIndex - 1 : 1;
+        populatedRows[currentRowIndex].querySelector('.stream-start-time').value =  populatedRows[copyElementIndex].querySelector('.stream-start-time').value
+        populatedRows[currentRowIndex].querySelector('.stream-description').value =  populatedRows[copyElementIndex].querySelector('.stream-description').value
+
+    }
+    updateCheckboxDisabledState()
+
 }
 
 function timeChangeHandler(event){
@@ -37,6 +47,7 @@ function timeChangeHandler(event){
     const checkbox = document.querySelector(`#${weekday} .day-checkbox`)
     checkbox.checked = true;
     checkbox.disabled = false;
+    updateCheckboxDisabledState()
 }
 
 function weekSelectorHandler(event){
@@ -108,7 +119,18 @@ function stringDateToDate(dateString){
 
 function generateDiscordScheduleLine(info, count){
     return `#${count}. <t:${info.time.getTime()/ 1000}:f> (<t:${info.time.getTime()/ 1000}:R>) : ${info.category? info.category: ''}\n`
-} 
+}
+
+/**
+ * To Update the disabled state of the checkboxes in the table. 
+ * The purpose of checkbox is such that when you click them, they copy the info from the rows above them ( cycled to the bottom ) 
+ * Because of this, if there are no rows with any data, the checkboxes need to be disabled
+ */
+function updateCheckboxDisabledState(){
+    const checkboxes = [...document.querySelectorAll('.day-checkbox')]
+    const disableCheckboxes = !checkboxes.reduce((p,c)=> c.checked || p, false) // checks if at least 1 checkbox is ticked, used to determine if others can be enabled too for copying of rows purpose 
+    checkboxes.forEach(e=>e.disabled= disableCheckboxes)
+}
 // Helper Functions End
 
 document.addEventListener('DOMContentLoaded', (event) => {

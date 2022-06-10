@@ -1,0 +1,10 @@
+.scrollable{
+    height: 100%;
+    overflow-y: auto;
+    min-width: min(120vh, 600px);
+}
+
+.max-width-input {
+    width: 100%;
+    display: block;
+  }
