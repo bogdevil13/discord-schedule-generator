@@ -94,6 +94,30 @@ function generateScheduleHandler(){
     const outputArea = document.getElementById("output-copy");
     outputArea.value = discordMessage;
     outputArea.style.visibility = 'visible';
+
+    try {
+        const type = "text/plain";
+        const blob = new Blob([discordMessage], { type });
+        const data = [new ClipboardItem({ [type]: blob })];
+    
+        navigator.clipboard.write(data)
+        .then(()=>{
+            document.getElementById("copy-hint").style.visibility = 'visible';
+            console.log('copied to clipboard')
+        })
+        .catch(()=>{
+            let hint = document.getElementById("copy-hint")
+            hint.innerHTML = 'Please Copy-Paste the below Text into your Discord';
+            hint.style.visibility = 'visible';
+            console.log('fail')
+        })
+        console.log("Fetched image copied.");
+      } catch (err) {
+        console.error(err.name, err.message);
+        console.log(err)
+      }
+
+
     document.getElementById("copy-hint").style.visibility = 'visible';
 }
 
