@@ -124,7 +124,7 @@ function stringDateToDate(dateString){
 }
 
 function generateDiscordScheduleLine(info, count){
-    return `#${count}. <t:${info.time.getTime()/ 1000}:f> (<t:${info.time.getTime()/ 1000}:R>) : ${info.category? info.category: ''}\n`
+    return `#${count}. <t:${info.time.getTime()/ 1000}:F> (<t:${info.time.getTime()/ 1000}:R>) : ${info.category? info.category: ''}\n`
 }
 
 /**
