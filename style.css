@@ -6,5 +6,5 @@
 .max-width-input {
     width: 100%;
     display: block;
-    min-width: min(120vh, 600px);
+    min-width: min(90vw, 600px);
   }

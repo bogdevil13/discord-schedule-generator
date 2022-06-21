@@ -4,15 +4,15 @@ const weekDaysList = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturd
 function generateDayRow(weekDayName){
     return `<tr id=${weekDayName} class='week-row'>
                 <th scope="row">${weekDayName}</th>
-                <td >
+                <td scope="row">
                     <div class="form-check form-switch">
                         <input class="form-check-input day-checkbox" type="checkbox" disabled>
                     </div>
                 </td>
-                <td>
+                <td scope="row">
                     <input class="stream-start-time" type="time" >
                 </td>
-                <td>
+                <td scope="row">
                     <input class="stream-description max-width-input" type="text" >
                 </td>
             </tr>
@@ -44,10 +44,17 @@ function checkboxChangeHandler(event){
 
 function timeChangeHandler(event){
     const weekday = event.target.parentElement.parentElement.id; 
-    const checkbox = document.querySelector(`#${weekday} .day-checkbox`)
-    checkbox.checked = true;
-    checkbox.disabled = false;
-    updateCheckboxDisabledState()
+    if(event.type == 'change' && event.target.value){
+        document.querySelector(`#${weekday} .day-checkbox`).checked = true;
+        updateCheckboxDisabledState() 
+    }else if(event.type == 'blur' &&  !event.target.value){
+        event.target.value = event.target.value // used to reset the value on frontend if say only half of the field is cleared and focused out
+        document.querySelector(`#${weekday} .day-checkbox`)
+        .checked = false;
+        document.querySelector(`#${weekday} .stream-description`)
+        .value = '';
+        updateCheckboxDisabledState() 
+    }
 }
 
 function weekSelectorHandler(event){
@@ -58,7 +65,6 @@ function weekSelectorHandler(event){
 
     }else{
         event.target.value = getInputFormattedDate( addDaysToDate( setToLastMonday(new Date()), 7 ) )
-
     }
 }
 
@@ -118,7 +124,7 @@ function stringDateToDate(dateString){
 }
 
 function generateDiscordScheduleLine(info, count){
-    return `#${count}. <t:${info.time.getTime()/ 1000}:f> (<t:${info.time.getTime()/ 1000}:R>) : ${info.category? info.category: ''}\n`
+    return `#${count}. <t:${info.time.getTime()/ 1000}:F> (<t:${info.time.getTime()/ 1000}:R>) : ${info.category? info.category: ''}\n`
 }
 
 /**
@@ -147,6 +153,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
 
     for(let timepicker of document.getElementsByClassName('stream-start-time') ){
         timepicker.addEventListener('change', timeChangeHandler );
+        timepicker.addEventListener('blur', timeChangeHandler );
         timepicker.addEventListener('focus', (event)=>{event.target.showPicker() }) 
     }
 
