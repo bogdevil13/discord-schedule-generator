@@ -111,7 +111,6 @@ function generateScheduleHandler(){
             hint.style.visibility = 'visible';
             console.log('fail')
         })
-        console.log("Fetched image copied.");
       } catch (err) {
         console.error(err.name, err.message);
         console.log(err)
