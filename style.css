@@ -1,10 +1,32 @@
-.scrollable{
-    height: 100%;
-    overflow-y: auto;
+.scrollable {
+  height: 100%;
+  overflow-y: auto;
 }
 
 .max-width-input {
-    width: 100%;
-    display: block;
-    min-width: min(90vw, 600px);
-  }
+  width: 100%;
+  display: block;
+  min-width: min(90vw, 600px);
+}
+
+html,
+body {
+  height: 100%;
+}
+body {
+  display: flex;
+  flex-direction: column;
+}
+.content {
+  flex: 1 0 auto;
+}
+.footer {
+  flex-shrink: 0;
+}
+
+footer div {
+    background: #b9b0b04f;
+    color: white;
+    display: flex;
+    flex-wrap: wrap;
+}

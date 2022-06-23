@@ -14,42 +14,50 @@
   </head>
 
   <body>
-    <div class="container border-start ">
-      <h1 class="text-center border  rounded-pill mt-3 ">Welcome to Schedule Generator for Discord</h1>
-
-      <div class="row my-3 mx-1 border">
-        <div class="col-sm-6 col-lg-8 themed-grid-col fs-4 text-center">Select the week you want to generate the Schedule
-          for</div>
-        <div class="col-6 col-lg-4 themed-grid-col pt-1">
-          <!-- <input type="week" id="week-selector" requierd> -->
-          <input type="date" id="week-selector" requierd>
-          <p id="week-selector-error-message" class="text-danger" style="visibility: hidden;">Required</p>
+    <div class="content">
+      <div class="container border-start ">
+        <h1 class="text-center border  rounded-pill mt-3 ">Welcome to Schedule Generator for Discord</h1>
+  
+        <div class="row my-3 mx-1 border">
+          <div class="col-sm-6 col-lg-8 themed-grid-col fs-4 text-center">Select the week you want to generate the Schedule
+            for</div>
+          <div class="col-6 col-lg-4 themed-grid-col pt-1">
+            <!-- <input type="week" id="week-selector" requierd> -->
+            <input type="date" id="week-selector" requierd>
+            <p id="week-selector-error-message" class="text-danger" style="visibility: hidden;">Required</p>
+          </div>
+        </div>
+  
+        <div class="scrollable">
+          <table class="table table-striped">
+            <thead>
+              <tr>
+                <th scope="col">Day</th>
+                <th scope="col">Clear/Copy</th>
+                <th scope="col">Time</th>
+                <th scope="col">Description/Category</th>
+              </tr>
+            </thead>
+            <tbody id="table-rows">
+    
+            </tbody>
+          </table>
+        </div>
+  
+        <div class="border">
+          <button id="generate-botton" type="button" class="btn btn-primary   m-2 ">Generate Discord Message</button>
+          <p id="copy-hint" style="visibility: hidden;" class="text-primary pt-5   m-2">Message Copied to Clipboard! Paste it in your Discord</p>
+          <!-- <p id="debug-string" class="text-danger"></p> -->
+          <textarea id="output-copy" class="  m-2" rows="7" cols="50" readonly style="visibility: hidden;"></textarea>
         </div>
       </div>
-
-      <div class="scrollable">
-        <table class="table table-striped">
-          <thead>
-            <tr>
-              <th scope="col">Day</th>
-              <th scope="col">Clear/Copy</th>
-              <th scope="col">Time</th>
-              <th scope="col">Description/Category</th>
-            </tr>
-          </thead>
-          <tbody id="table-rows">
-  
-          </tbody>
-        </table>
-      </div>
-
-      <div class="border">
-        <button id="generate-botton" type="button" class="btn btn-primary   m-2 ">Generate Discord Message</button>
-        <p id="copy-hint" style="visibility: hidden;" class="text-primary pt-5   m-2">Message Copied to Clipboard! Paste it in your Discord</p>
-        <!-- <p id="debug-string" class="text-danger"></p> -->
-        <textarea id="output-copy" class="  m-2" rows="7" cols="50" readonly style="visibility: hidden;"></textarea>
-      </div>
     </div>
+    <footer class="footer">
+      <div class="container ">
+        <a  class="btn btn-light m-1" href="/custom-message.html">Generator</a>
+        <a  class="btn btn-secondary m-1" href="/custom-message.html">⚙ Configurations</a>
+        <a  class="btn btn-secondary m-1" href="https://github.com/bogdevil13/discord-schedule-generator">Source</a>
+      </div>
+    </footer>
   </body>
-
 </html>
