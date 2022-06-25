@@ -44,8 +44,8 @@ const timeFormats = [
     {
         name:           'relativeTime',
         label:          'Relative Time',
-        example12hr:    'in a day | in 3 hours | in 11 minutes',
-        example24hr:    'in a day | in 3 hours | in 11 minutes',
+        example12hr:    'in a day',
+        example24hr:    '',
         formatCharacter: '<t:epoch:R>'
     },
     {
@@ -73,13 +73,16 @@ function generateTimeConfigRow(config){
                 <td scope="row">${config.label}</td>
                 <td scope="row">${config.example12hr}</td>
                 <td scope="row">${config.example24hr}</td>
+                <td scope="row">&lt;&lt;${config.name}&gt;&gt;</td>
             </tr>`
 }
 
 document.addEventListener('DOMContentLoaded', (event) => {
     document.querySelector("#custom-format-options").innerHTML = timeFormats.reduce((prev, current)=>prev + this.generateTimeConfigRow(current),'');
     [...document.querySelectorAll('#custom-format-options .remove-button, #custom-format-options .add-button') ]
-    .forEach(e=>e.addEventListener('click', this.customMessageButtonHandler ))
+    .forEach(e=>e.addEventListener('click', this.customMessageButtonHandler ));
+    [...document.querySelectorAll('#stream-template, #title-template')].forEach(e=>e.addEventListener('input', this.generatePreview ));
+    generatePreview()
 
 })
 
@@ -91,9 +94,34 @@ function customMessageButtonHandler(event){
     console.log(name, isAdd)
     if(isAdd){
         template.value = template.value + `<<${name}>>`;
-    }else{
-
+        generatePreview()
+    }else if(template.value.indexOf(`<<${name}>>`) != -1 ){
+        let lastIndex = template.value.lastIndexOf(`<<${name}>>`) 
+        template.value = template.value.substring(0,lastIndex) + template.value.substring(lastIndex+ `<<${name}>>`.length)
+        generatePreview()
     }   
 
+}
+
+function generatePreview(){
+    let titleTemplate = document.querySelector('#title-template').value;
+    titleTemplate ? null : (titleTemplate  = document.querySelector('#title-template').placeholder)
+    let streamTemplate = document.querySelector('#stream-template').value;
+    streamTemplate ? null : (streamTemplate  = document.querySelector('#stream-template').placeholder)
+    console.log( 'title : ', titleTemplate, ' stream : ',streamTemplate)
+    let streamMapping = [
+        {counter : 1 ,category : 'Minecraft'},
+        {counter : 2 ,category : 'Skyrim'},
+        {counter : 3 ,category : 'Just Chatting'},
+        {counter : 4 ,category : 'Community Game Night'},
+    ]
+    let previewHTML = `<p class="mb-0">${titleTemplate}</p>`;
+    timeFormats.slice(0,7).forEach(e=>{
+        streamTemplate = streamTemplate.replaceAll(`<<${e.name}>>`, `<span class="discord-preview-date rounded">${e.example12hr}</span>` )
+    })
+    streamMapping.forEach(e =>{
+        previewHTML += `<p class="mb-0">${streamTemplate.replaceAll('<<counter>>',  e.counter).replaceAll('<<category>>',  e.category)   }</p>`
+    })
+    document.querySelector('.discord-preview').innerHTML = previewHTML
 }
 

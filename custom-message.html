@@ -15,39 +15,48 @@
 <body>
 
     <div class="content">
-        <div class="container border-start pt-3">   
-            <div class="scrollable">
-                <table class="table table-striped w-auto table-bordered table-hover">
-                    <thead>
-                        <tr>
-                            <th scope="col">
-                                <div><b>Add/Remove</b></div>
-                                <div  class="fw-light">(not applicable for Title)</div>
-                            </th>
-                            <th scope="col">Type</th>
-                            <th scope="col">12 hr Output</th>
-                            <th scope="col">24 hr Output</th>
-                        </tr>
-                    </thead>
-                    <tbody id="custom-format-options">
-                    </tbody>
-                </table>
-            </div>
-            <div>
-        
-            </div>
-            <div>
-                <span>Title</span><br>
-                <input type="text" class="max-width-input" id="title-template" placeholder="**Schedule**">
-            </div>
-        
-            <div>
-                <span>Stream Template</span><br>
-                <input type="text" class="max-width-input" id="stream-template"  placeholder="#<<counter>>. <<longDateTime>> (<<relativeTime>>) : <<category>>">
-            </div>
-            <div>
-                <button type="button" class="btn btn-primary   m-2 ">Save</button>
-                <button type="button" class="btn btn-secondary   m-2 ">Reset to Defaults</button>
+        <div class="container pt-3">   
+            <h1 class="text-center border  rounded-pill mt-3 ">Configurations and Customizations</h1>
+
+            <div class="border-top border-bottom p-2">
+                <h3 class="mt-3 ">Output Template</h3>
+                <div class="scrollable">
+                    <table class="table table-striped w-auto table-bordered table-hover">
+                        <thead>
+                            <tr>
+                                <th scope="col">
+                                    <div><b>Add/Remove</b></div>
+                                    <div  class="fw-light">(not applicable for Title)</div>
+                                </th>
+                                <th scope="col">Type</th>
+                                <th scope="col">12 hr Output</th>
+                                <th scope="col">24 hr Output</th>
+                                <th scope="col">Abbreviation</th>
+                            </tr>
+                        </thead>
+                        <tbody id="custom-format-options">
+                        </tbody>
+                    </table>
+                </div>
+                <div>
+            
+                </div>
+                <div>
+                    <span>Title</span><br>
+                    <input type="text" class="max-width-input" id="title-template" placeholder="**Schedule**">
+                </div>
+            
+                <div>
+                    <span>Stream Template</span><br>
+                    <input type="text" class="max-width-input" id="stream-template"  placeholder="#<<counter>>. <<longDateTime>> (<<relativeTime>>) : <<category>>">
+                </div>
+                <div>
+                    <button type="button" class="btn btn-primary   m-2 ">Save</button>
+                    <button type="button" class="btn btn-secondary   m-2 ">Reset to Defaults</button>
+                </div>
+                <h5>Preview</h5>
+                <div class="discord-preview">
+                </div>
             </div>
         </div>
     </div>

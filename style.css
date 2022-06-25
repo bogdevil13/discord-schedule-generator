@@ -30,3 +30,13 @@ footer div {
     display: flex;
     flex-wrap: wrap;
 }
+
+.discord-preview {
+  background-color: #36393F;
+  color: #dcddde;
+  display: inline-block;
+  padding: 1rem;
+}
+.discord-preview-date {
+  background-color: #42464C;
+}
