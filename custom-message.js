@@ -1,68 +1,4 @@
-const timeFormats = [
-    {
-        name:           'shortTime',
-        label:          'Short Time',
-        example12hr:    '8:30 AM',
-        example24hr:    '8:30',
-        formatCharacter: '<t:epoch:t>'
-    },
-    {
-        name:           'longTime',
-        label:          'Long Time',
-        example12hr:    '8:30:00 AM',
-        example24hr:    '8:30:00',
-        formatCharacter: '<t:epoch:T>'
-    },
-    {
-        name:           'shortDate',
-        label:          'Short Date',
-        example12hr:    '06/13/2022',
-        example24hr:    '13/06/2022',
-        formatCharacter: '<t:epoch:d>'
-    },
-    {
-        name:           'longDate',
-        label:          'Long Date',
-        example12hr:    'June 13, 2022',
-        example24hr:    '13 June 2022',
-        formatCharacter: '<t:epoch:D>'
-    },
-    {
-        name:           'shortDateTime',
-        label:          'Short Date/Time',
-        example12hr:    'June 13, 2022 8:30 AM',
-        example24hr:    '13 June 2022 8:30',
-        formatCharacter: '<t:epoch:f>'
-    },
-    {
-        name:           'longDateTime',
-        label:          'Long Date/Time',
-        example12hr:    'Monday, June 13, 2022 8:30 AM',
-        example24hr:    'Monday, 13 June 2022 8:30',
-        formatCharacter: '<t:epoch:F>'
-    },
-    {
-        name:           'relativeTime',
-        label:          'Relative Time',
-        example12hr:    'in a day',
-        example24hr:    '',
-        formatCharacter: '<t:epoch:R>'
-    },
-    {
-        name:           'counter',
-        label:          'Counter',
-        example12hr:    '1,2,3.....',
-        example24hr:    '',
-        formatCharacter: ''
-    },
-    {
-        name:           'category',
-        label:          'Description/Category',
-        example12hr:    '[description for the stream]',
-        example24hr:    '',
-        formatCharacter: ''
-    },
-]
+import { timeFormats, storageAvailable, escapeHtml, defaultConfig, getConfig } from "./constants.js";
 
 function generateTimeConfigRow(config){
     return `<tr id=${config.name}>
@@ -78,11 +14,20 @@ function generateTimeConfigRow(config){
 }
 
 document.addEventListener('DOMContentLoaded', (event) => {
-    document.querySelector("#custom-format-options").innerHTML = timeFormats.reduce((prev, current)=>prev + this.generateTimeConfigRow(current),'');
+    let userConfigs = window.localStorage.getItem('userConfigs');
+    if(userConfigs) userConfigs = JSON.parse(userConfigs);
+    document.querySelector("#custom-format-options").innerHTML = timeFormats.reduce((prev, current)=>prev + generateTimeConfigRow(current),'');
     [...document.querySelectorAll('#custom-format-options .remove-button, #custom-format-options .add-button') ]
-    .forEach(e=>e.addEventListener('click', this.customMessageButtonHandler ));
-    [...document.querySelectorAll('#stream-template, #title-template')].forEach(e=>e.addEventListener('input', this.generatePreview ));
+    .forEach(e=>e.addEventListener('click', customMessageButtonHandler ));
+    let streamTemplate = document.querySelector("#stream-template");
+    streamTemplate.addEventListener('input', generatePreview )
+    if(userConfigs && userConfigs.streamTemplate) streamTemplate.value = userConfigs.streamTemplate;
+    let titleTemplate = document.querySelector("#title-template");
+    titleTemplate.addEventListener('input', generatePreview )
+    if(userConfigs && userConfigs.titleTemplate) titleTemplate.value = userConfigs.titleTemplate;
     generatePreview()
+    document.querySelector("#save-template").addEventListener('click', saveTemplate );
+    document.querySelector("#reset-template").addEventListener('click', resetToDefaults );
 
 })
 
@@ -91,7 +36,6 @@ function customMessageButtonHandler(event){
     let name =  event.target.parentElement.parentElement.id ;
     let template = document.querySelector('#stream-template')
     // let configs = timeFormats.find(e=>e.name == name);
-    console.log(name, isAdd)
     if(isAdd){
         template.value = template.value + `<<${name}>>`;
         generatePreview()
@@ -108,14 +52,14 @@ function generatePreview(){
     titleTemplate ? null : (titleTemplate  = document.querySelector('#title-template').placeholder)
     let streamTemplate = document.querySelector('#stream-template').value;
     streamTemplate ? null : (streamTemplate  = document.querySelector('#stream-template').placeholder)
-    console.log( 'title : ', titleTemplate, ' stream : ',streamTemplate)
+    // console.log( 'title : ', titleTemplate, ' stream : ',streamTemplate)
     let streamMapping = [
         {counter : 1 ,category : 'Minecraft'},
         {counter : 2 ,category : 'Skyrim'},
         {counter : 3 ,category : 'Just Chatting'},
         {counter : 4 ,category : 'Community Game Night'},
     ]
-    let previewHTML = `<p class="mb-0">${titleTemplate}</p>`;
+    let previewHTML = `<p class="mb-0">${escapeHtml(titleTemplate)}</p><p class="mb-0">&nbsp;</p>`;
     timeFormats.slice(0,7).forEach(e=>{
         streamTemplate = streamTemplate.replaceAll(`<<${e.name}>>`, `<span class="discord-preview-date rounded">${e.example12hr}</span>` )
     })
@@ -125,3 +69,27 @@ function generatePreview(){
     document.querySelector('.discord-preview').innerHTML = previewHTML
 }
 
+
+
+function saveTemplate(){
+    if(storageAvailable('localStorage')){
+        console.log('storage supported')
+        let titleTemplate = document.querySelector('#title-template').value;
+        let streamTemplate = document.querySelector('#stream-template').value;
+        let savedConfigs = {};
+        if(titleTemplate) savedConfigs['titleTemplate'] = titleTemplate;
+        if(streamTemplate) savedConfigs['streamTemplate'] = streamTemplate;
+        console.log(JSON.stringify(savedConfigs))
+        window.localStorage.setItem('userConfigs', JSON.stringify(savedConfigs) );
+
+    }else{
+        console.log('no storage access')
+    }
+}
+
+function resetToDefaults(){
+    document.querySelector('#title-template').value = null;
+    document.querySelector('#stream-template').value = null;
+    window.localStorage.removeItem('userConfigs')
+    generatePreview()
+}

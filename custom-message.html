@@ -7,7 +7,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-    <script src="custom-message.js"></script>
+    <script src="constants.js"  type="module" ></script>
+    <script src="custom-message.js"  type="module" ></script>
     <title>Generate Custom Message helper</title>
     <link rel="stylesheet" href="style.css">
 </head>
@@ -48,11 +49,11 @@
             
                 <div>
                     <span>Stream Template</span><br>
-                    <input type="text" class="max-width-input" id="stream-template"  placeholder="#<<counter>>. <<longDateTime>> (<<relativeTime>>) : <<category>>">
+                    <input type="text" class="max-width-input" id="stream-template" placeholder="#<<counter>>. <<longDateTime>> (<<relativeTime>>) : <<category>>">
                 </div>
                 <div>
-                    <button type="button" class="btn btn-primary   m-2 ">Save</button>
-                    <button type="button" class="btn btn-secondary   m-2 ">Reset to Defaults</button>
+                    <button id="save-template" type="button" class="btn btn-primary   m-2 ">Save</button>
+                    <button id="reset-template"  type="button" class="btn btn-secondary   m-2 ">Reset to Defaults</button>
                 </div>
                 <h5>Preview</h5>
                 <div class="discord-preview">
