@@ -1,4 +1,4 @@
-
+import { timeFormats, storageAvailable, escapeHtml, defaultConfig, getConfig } from "./constants.js";
 const weekDaysList = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
 
 function generateDayRow(weekDayName){
@@ -21,14 +21,14 @@ function generateDayRow(weekDayName){
 
 function checkboxChangeHandler(event){
     const weekday = event.target.parentElement.parentElement.parentElement.id; 
-    console.log(event.target.checked, weekday ); // 
+    // console.log(event.target.checked, weekday ); 
     if(!event.target.checked){
         event.target.disabled = true;
         document.querySelector(`#${weekday} .stream-start-time`)
         .value = '';
         document.querySelector(`#${weekday} .stream-description`)
         .value = '';
-        console.log(document.querySelector(`#${weekday} .stream-description`))
+        // console.log(document.querySelector(`#${weekday} .stream-description`))
     }
     else { //checked
         let populatedRows = [...document.querySelectorAll('.week-row')].filter(wr=> wr.querySelector('.day-checkbox').checked ) // https://www.w3.org/TR/selectors-api/#queryselectorall -> already sorted in the order of appearance 
@@ -71,26 +71,24 @@ function weekSelectorHandler(event){
 function generateScheduleHandler(){
     const weekSelector = document.getElementById("week-selector")
     const mondayDate = stringDateToDate(weekSelector.value)
-    let resultList = []
     let count = 1;
-    let discordMessage = '**Schedule**\n'
+    let discordMessage = `${getConfig('titleTemplate')}\n\n`
+    let streamTemplate = getConfig('streamTemplate')
     for(let row of document.getElementsByClassName('week-row') ){
         const timeElement = row.getElementsByClassName('stream-start-time')[0]
         const category = row.getElementsByClassName('stream-description')[0]
-        console.log(row.id, timeElement.value);
+        // console.log(row.id, timeElement.value);
         if(timeElement.value){
             let selectedWeeksDate = new Date(mondayDate.getTime());
             selectedWeeksDate = addDaysToDate(selectedWeeksDate, weekDaysList.indexOf(row.id));
             selectedWeeksDate.setHours( timeElement.value.split(':')[0],
                                         timeElement.value.split(':')[1],
                                         0)
-            discordMessage += generateDiscordScheduleLine({ time: selectedWeeksDate, category: category.value },count )
-            resultList.push({ time: selectedWeeksDate, category: category.value })
+            discordMessage += generateDiscordScheduleLine({ time: selectedWeeksDate, category: category.value, counter : count }, streamTemplate )
             count += 1
         }
     }
-    console.log(resultList)
-    console.log(discordMessage)
+    // console.log(discordMessage)
     const outputArea = document.getElementById("output-copy");
     outputArea.value = discordMessage;
     outputArea.style.visibility = 'visible';
@@ -111,13 +109,12 @@ function generateScheduleHandler(){
             hint.style.visibility = 'visible';
             console.log('fail')
         })
-      } catch (err) {
+    } catch (err) {
         console.error(err.name, err.message);
         console.log(err)
-      }
+    }
+    saveSchedule()
 
-
-    document.getElementById("copy-hint").style.visibility = 'visible';
 }
 
 // Helper Functions 
@@ -146,8 +143,12 @@ function stringDateToDate(dateString){
     return new Date(dateSplit[0], dateSplit[1]-1, dateSplit[2])
 }
 
-function generateDiscordScheduleLine(info, count){
-    return `#${count}. <t:${info.time.getTime()/ 1000}:F> (<t:${info.time.getTime()/ 1000}:R>) : ${info.category? info.category: ''}\n`
+function generateDiscordScheduleLine(info, template){
+    let epoch = info.time.getTime()/ 1000;
+    timeFormats.forEach(rec=>{
+        template = template.replaceAll(`<<${rec.name}>>`, rec.formatCharacter ? rec.formatCharacter.replace('epoch',epoch) : info[rec.name] )
+    })
+    return template + '\n'
 }
 
 /**
@@ -168,7 +169,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
     weekSelector.addEventListener('change', weekSelectorHandler)
     weekSelector.value = getInputFormattedDate( addDaysToDate( setToLastMonday(new Date()), 7 ) )
 
-    document.getElementById("table-rows").innerHTML = weekDaysList.reduce((prev, current)=>prev + this.generateDayRow(current),'')
+    document.getElementById("table-rows").innerHTML = weekDaysList.reduce((prev, current)=>prev + generateDayRow(current),'')
 
     for(let checkbox of document.getElementsByClassName('day-checkbox') ){
         checkbox.addEventListener('change', checkboxChangeHandler );
@@ -181,10 +182,37 @@ document.addEventListener('DOMContentLoaded', (event) => {
     }
 
     document.getElementById("generate-botton").addEventListener('click', generateScheduleHandler)
-    // if(!document.queryCommandSupported('copy')){
-    //     document.getElementById("debug-string").innerHTML = 'Copy operation is not supported by your Browser. Please provide us with your device info for bug fixes.'
-    // }
+    setSavedSchedule()
     
 
 
 });
+
+
+function saveSchedule() {
+    let scheduleData = [];
+    [...document.getElementsByClassName('week-row')].forEach(
+        day => {
+            let dayData = {
+                'name' : day.id,
+                'time' : day.querySelector('.stream-start-time').value,
+                'category' : day.querySelector('.stream-description').value,
+            };
+            scheduleData.push(dayData)
+    })
+    if(storageAvailable('localStorage') ){
+        window.localStorage.setItem('schedule', JSON.stringify(scheduleData))
+    }
+}
+
+function setSavedSchedule() {
+    if(storageAvailable('localStorage') && window.localStorage.getItem('schedule')){
+        let schedule = JSON.parse(window.localStorage.getItem('schedule'))
+        schedule.forEach(day=>{
+            document.querySelector(`#${day.name} .stream-start-time`).value = day.time;
+            document.querySelector(`#${day.name} .day-checkbox`).checked = Boolean(day.time);
+            document.querySelector(`#${day.name} .stream-description`).value = day.category;
+        })
+        updateCheckboxDisabledState()
+    }
+}
