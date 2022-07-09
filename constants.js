@@ -64,6 +64,21 @@ export const timeFormats = [
     },
 ]
 
+export const testerList = [
+    'britteez',
+    'chailattenebula',
+    'curlspray',
+    'draonthan',
+    'keyboardturneroverdrive',
+    'macsavage451',
+    'nickel2sulfate',
+    'nterruptus',
+    'rohvertv',
+    'saffysparkles',
+    'smokeybakedpotato',
+    'The_Egg_and_I',
+    'zelduhgames'
+]
 
 export const defaultConfig = {
     'titleTemplate' : '**Schedule**',
