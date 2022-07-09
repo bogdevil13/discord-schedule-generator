@@ -14,7 +14,8 @@ function fetchTwitchProfiles(){
             return res.text()
         })
         .then(res=>{
-            let image = new DOMParser().parseFromString(res, "text/html").querySelector('meta[name="twitter:image"]').content;
+            let imageUrl = new DOMParser().parseFromString(res, "text/html").querySelector('meta[name="twitter:image"]').content;
+
             streamersData.push( generateStreamerTemplate(imageUrl, userName) )
             if (document.readyState !== "loading"){
                 rerenderStreamerList()
