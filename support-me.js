@@ -8,8 +8,14 @@ document.addEventListener('DOMContentLoaded', (event) => {
 fetchTwitchProfiles();
 
 function fetchTwitchProfiles(){
+    let fetchOptions =  {
+        method : 'GET',
+        headers: new Headers({
+            "User-Agent" : "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36"
+        })
+    }
     testerList.forEach(userName =>{
-        fetch(`twitch/${userName}`)
+        fetch(`twitch/${userName}`,fetchOptions)
         .then(res=>{
             return res.text()
         })
