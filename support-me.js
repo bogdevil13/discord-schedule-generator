@@ -15,7 +15,7 @@ function fetchTwitchProfiles(){
         })
     }
     testerList.forEach(userName =>{
-        fetch(`twitch/${userName}`,fetchOptions)
+        fetch(`twitch/${userName}`,{mode: 'no-cors'})
         .then(res=>{
             return res.text()
         })
