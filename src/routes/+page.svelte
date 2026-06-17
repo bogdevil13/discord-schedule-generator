@@ -31,6 +31,7 @@
 	let output = $state('');
 	let copyHint = $state('');
 	let showOutput = $state(false);
+	let shareHint = $state('');
 
 	function addSlot(dayIndex: number) {
 		const slots = days[dayIndex].slots;
@@ -70,6 +71,16 @@
 		const monday = setToLastMonday(raw);
 		weekDate = monday;
 		weekDateStr = getInputFormattedDate(monday);
+	}
+
+	async function shareUrl() {
+		try {
+			await navigator.clipboard.writeText(window.location.href);
+			shareHint = 'Link copied!';
+		} catch {
+			shareHint = 'Copy this: ' + window.location.href;
+		}
+		setTimeout(() => (shareHint = ''), 3000);
 	}
 
 	async function generate() {
@@ -208,6 +219,25 @@
 			</section>
 		{/if}
 	</main>
+
+	<section class="share-banner">
+		<div class="share-inner">
+			<div class="share-text">
+				<span class="share-emoji">🎉</span>
+				<div>
+					<strong>Share with your friends!</strong>
+					<p>Know a streamer who needs this? Send them the link.</p>
+				</div>
+			</div>
+			<button class="btn-share" onclick={shareUrl}>
+				{#if shareHint}
+					✅ {shareHint}
+				{:else}
+					🔗 Copy Link
+				{/if}
+			</button>
+		</div>
+	</section>
 
 	<footer>
 		<a href="/" class="btn-footer active">Generator</a>
@@ -449,6 +479,52 @@
 		box-sizing: border-box;
 		resize: vertical;
 	}
+
+	/* Share banner */
+	.share-banner {
+		background: linear-gradient(135deg, #5865f2 0%, #7b68ee 50%, #9b59b6 100%);
+		padding: 1.25rem 1.5rem;
+	}
+
+	.share-inner {
+		max-width: 900px;
+		margin: 0 auto;
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 1rem;
+		flex-wrap: wrap;
+	}
+
+	.share-text {
+		display: flex;
+		align-items: center;
+		gap: 0.85rem;
+		color: #fff;
+	}
+
+	.share-emoji { font-size: 2rem; line-height: 1; }
+
+	.share-text strong { display: block; font-size: 1rem; font-weight: 700; }
+
+	.share-text p { margin: 0.1rem 0 0; font-size: 0.85rem; opacity: 0.85; }
+
+	.btn-share {
+		background: #fff;
+		color: #5865f2;
+		border: none;
+		border-radius: 8px;
+		padding: 0.6rem 1.4rem;
+		font-size: 0.95rem;
+		font-weight: 700;
+		cursor: pointer;
+		white-space: nowrap;
+		transition: transform 0.1s, box-shadow 0.15s;
+		box-shadow: 0 2px 8px rgba(0,0,0,0.25);
+	}
+
+	.btn-share:hover { transform: translateY(-1px); box-shadow: 0 4px 14px rgba(0,0,0,0.3); }
+	.btn-share:active { transform: translateY(0); }
 
 	footer {
 		background: var(--bg-surface);
