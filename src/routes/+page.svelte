@@ -13,6 +13,7 @@
 	interface Slot {
 		time: string;
 		category: string;
+		editing?: boolean;
 	}
 
 	interface Day {
@@ -32,16 +33,26 @@
 	let showOutput = $state(false);
 
 	function addSlot(dayIndex: number) {
-		days[dayIndex].slots = [...days[dayIndex].slots, { time: '', category: '' }];
+		const slots = days[dayIndex].slots;
+		// Search: current day first, then backwards, then wrap to end of week
+		let last: Slot | undefined;
+		const searchOrder = [
+			dayIndex,
+			...Array.from({ length: days.length - 1 }, (_, i) => (dayIndex - 1 - i + days.length) % days.length)
+		];
+		for (const di of searchOrder) {
+			last = [...days[di].slots].reverse().find(s => s.time);
+			if (last) break;
+		}
+		days[dayIndex].slots = [...slots, { time: last?.time ?? '', category: last?.category ?? '', editing: true }];
 	}
 
 	function removeSlot(dayIndex: number, slotIndex: number) {
-		const slots = days[dayIndex].slots.filter((_, i) => i !== slotIndex);
-		days[dayIndex].slots = slots.length > 0 ? slots : [{ time: '', category: '' }];
+		days[dayIndex].slots = days[dayIndex].slots.filter((_, i) => i !== slotIndex);
 	}
 
 	function setSlotTime(dayIndex: number, slotIndex: number, value: string) {
-		days[dayIndex].slots[slotIndex] = { ...days[dayIndex].slots[slotIndex], time: value };
+		days[dayIndex].slots[slotIndex] = { ...days[dayIndex].slots[slotIndex], time: value, editing: false };
 	}
 
 	function setSlotCategory(dayIndex: number, slotIndex: number, value: string) {
@@ -154,25 +165,30 @@
 					</div>
 					<div class="slots">
 						{#each day.slots as slot, si}
-							<div class="slot-row" class:has-time={!!slot.time}>
-								<span class="slot-num">#{si + 1}</span>
-								<input
-									type="time"
-									value={slot.time}
-									oninput={(e) => setSlotTime(di, si, (e.target as HTMLInputElement).value)}
-									onblur={(e) => { if (!(e.target as HTMLInputElement).value) setSlotTime(di, si, ''); }}
-									onfocus={(e) => { try { (e.target as HTMLInputElement).showPicker?.(); } catch { /* ignore */ } }}
-								/>
-								<input
-									type="text"
-									placeholder="Category / Description"
-									value={slot.category}
-									disabled={!slot.time}
-									oninput={(e) => setSlotCategory(di, si, (e.target as HTMLInputElement).value)}
-								/>
-								<button class="btn-remove-slot" onclick={() => removeSlot(di, si)} title="Remove slot" aria-label="Remove slot">✕</button>
-							</div>
+							{#if slot.time || slot.editing}
+								<div class="slot-row" class:has-time={!!slot.time}>
+									<span class="slot-num">#{si + 1}</span>
+									<input
+										type="time"
+										value={slot.time}
+										oninput={(e) => setSlotTime(di, si, (e.target as HTMLInputElement).value)}
+										onblur={(e) => { if (!(e.target as HTMLInputElement).value) removeSlot(di, si); }}
+										onfocus={(e) => { try { (e.target as HTMLInputElement).showPicker?.(); } catch { /* ignore */ } }}
+									/>
+									<input
+										type="text"
+										placeholder="Category / Description"
+										value={slot.category}
+										disabled={!slot.time}
+										oninput={(e) => setSlotCategory(di, si, (e.target as HTMLInputElement).value)}
+									/>
+									<button class="btn-remove-slot" onclick={() => removeSlot(di, si)} title="Remove slot" aria-label="Remove slot">✕</button>
+								</div>
+							{/if}
 						{/each}
+						{#if !day.slots.some(s => s.time || s.editing)}
+							<p class="no-slots">No slots — click <strong>+ Add Slot</strong> to schedule.</p>
+						{/if}
 					</div>
 				</div>
 			{/each}
@@ -317,6 +333,13 @@
 		display: flex;
 		flex-direction: column;
 		gap: 0.45rem;
+	}
+
+	.no-slots {
+		font-size: 0.8rem;
+		color: var(--text-secondary);
+		margin: 0.15rem 0 0;
+		font-style: italic;
 	}
 
 	.slot-row {
